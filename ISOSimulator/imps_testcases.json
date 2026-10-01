@@ -1,0 +1,2402 @@
+{
+  "channel": "IMPS",
+  "version": 1,
+  "settings": {
+    "direction_rule": {
+      "enabled": true,
+      "de": 124,
+      "debit_value": "IMPS|000000|DEBIT|9024655944-2@ybl|9024655944-2@ybl|IMPS",
+      "credit_value": "IMPS|000000|CREDIT|9024655944-2@ybl|9024655944-2@ybl|IMPS"
+    },
+    "default_echo_des": [
+      2,
+      3,
+      4,
+      11,
+      37,
+      49,
+      102
+    ],
+    "des_check": "strict",
+    "step_delay_ms": 0
+  },
+  "profiles": {
+    "standard": {
+      "title": "Active / Funded Account",
+      "card": "8180073930053234",
+      "account": "0020001010000069",
+      "expiry": "2907",
+      "desc": "Active savings account with ample balance."
+    },
+    "closed": {
+      "title": "Closed Account",
+      "card": "8180073930053234",
+      "account": "0020001010011800",
+      "expiry": "2907",
+      "desc": "Account closed in CBS."
+    },
+    "total_freeze": {
+      "title": "Total Freeze Account",
+      "card": "8180073930053234",
+      "account": "0020001010011663",
+      "expiry": "2907",
+      "desc": "Debit and credit freeze."
+    },
+    "debit_freeze": {
+      "title": "Debit Freeze Account",
+      "card": "8180073930053234",
+      "account": "0020001010011664",
+      "expiry": "2907",
+      "desc": "Debits blocked, credits allowed."
+    },
+    "credit_freeze": {
+      "title": "Credit Freeze Account",
+      "card": "8180073930053234",
+      "account": "0020001010011665",
+      "expiry": "2907",
+      "desc": "Credits blocked, debits allowed."
+    },
+    "dormant": {
+      "title": "Dormant / Inoperative Account",
+      "card": "8180073930053234",
+      "account": "0020001010011700",
+      "expiry": "2907",
+      "desc": "No customer-induced debit permitted."
+    },
+    "low_funds": {
+      "title": "Low Funds Account (bal 100.00)",
+      "card": "8180073930053234",
+      "account": "0020001010010999",
+      "expiry": "2907",
+      "desc": "Insufficient for normal debits."
+    },
+    "frequency": {
+      "title": "Frequency Limit Account (3/day)",
+      "card": "8180073930053234",
+      "account": "0020001010012000",
+      "expiry": "2907",
+      "desc": "Daily debit count limit = 3."
+    },
+    "not_found": {
+      "title": "Account Not in CBS",
+      "card": "8180073930053234",
+      "account": "0020009999999999",
+      "expiry": "2907",
+      "desc": "Account does not exist."
+    },
+    "sql_injection": {
+      "title": "Injection String in DE 102",
+      "card": "8180073930053234",
+      "account": "0020001010000069' OR '1'='1",
+      "expiry": "2907",
+      "desc": "Malicious characters in account field."
+    }
+  },
+  "testcases": [
+    {
+      "id": "IMPS_NW_001",
+      "category": "Network Management",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Sign-On (0800 / DE 70 = 001)",
+      "description": "Switch signs on to CBS.",
+      "expected_result": "0810 with DE 39 = 00; DE 7/11/70 echoed.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "0800 DE70=001",
+          "mti": "0800",
+          "des": [
+            7,
+            11,
+            70
+          ],
+          "set": {
+            "70": "001"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "echo": [
+              7,
+              11,
+              70
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NW_002",
+      "category": "Network Management",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Echo Test (0800 / DE 70 = 301)",
+      "description": "Heartbeat between switch and CBS.",
+      "expected_result": "0810 with DE 39 = 00.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "0800 DE70=301",
+          "mti": "0800",
+          "des": [
+            7,
+            11,
+            70
+          ],
+          "set": {
+            "70": "301"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "echo": [
+              7,
+              11,
+              70
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NW_003",
+      "category": "Network Management",
+      "priority": "P2",
+      "enabled": true,
+      "name": "Key Exchange (0800 / DE 70 = 101)",
+      "description": "Working-key exchange request.",
+      "expected_result": "0810 with DE 39 = 00.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "0800 DE70=101",
+          "mti": "0800",
+          "des": [
+            7,
+            11,
+            70
+          ],
+          "set": {
+            "70": "101"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "echo": [
+              7,
+              11,
+              70
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NW_004",
+      "category": "Network Management",
+      "priority": "P2",
+      "enabled": true,
+      "name": "Cut-Over (0800 / DE 70 = 201)",
+      "description": "Business-day cut-over notification.",
+      "expected_result": "0810 with DE 39 = 00.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "0800 DE70=201",
+          "mti": "0800",
+          "des": [
+            7,
+            11,
+            70
+          ],
+          "set": {
+            "70": "201"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "echo": [
+              7,
+              11,
+              70
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NW_005",
+      "category": "Network Management",
+      "priority": "P2",
+      "enabled": true,
+      "name": "Sign-Off (0800 / DE 70 = 002)",
+      "description": "Switch signs off from CBS.",
+      "expected_result": "0810 with DE 39 = 00.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "0800 DE70=002",
+          "mti": "0800",
+          "des": [
+            7,
+            11,
+            70
+          ],
+          "set": {
+            "70": "002"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "echo": [
+              7,
+              11,
+              70
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NW_006",
+      "category": "Network Management",
+      "priority": "P3",
+      "enabled": true,
+      "name": "Invalid Network Code (DE 70 = 555)",
+      "description": "Unsupported network management code.",
+      "expected_result": "0810 declined with 12 / 30.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "0800 DE70=555",
+          "mti": "0800",
+          "des": [
+            7,
+            11,
+            70
+          ],
+          "set": {
+            "70": "555"
+          },
+          "expect": {
+            "rc": [
+              "12",
+              "30"
+            ],
+            "echo": [
+              7,
+              11,
+              70
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_POS_001",
+      "category": "Positive",
+      "priority": "P1",
+      "enabled": true,
+      "name": "IMPS List Account / Account Verification",
+      "description": "",
+      "expected_result": "0210 RC 00; DE 102 echoed.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "List account",
+          "tx": "imps_list_account",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              102
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_POS_002",
+      "category": "Positive",
+      "priority": "P1",
+      "enabled": true,
+      "name": "IMPS Balance Enquiry with DE 54",
+      "description": "",
+      "expected_result": "0210 RC 00; DE 54 well-formed.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Balance enquiry",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "regex": {
+              "54": "^(\\d{2}\\d{2}\\d{3}[CD]\\d{12})+$"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_POS_003",
+      "category": "Positive",
+      "priority": "P1",
+      "enabled": true,
+      "name": "IMPS Outward Pay (Debit) - Balance Debited",
+      "description": "",
+      "expected_result": "0210 RC 00; balance reduced by 1000.00.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "1000.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "-1000.00"
+            }
+          }
+        },
+        {
+          "label": "Cleanup reversal",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_POS_004",
+      "category": "Positive",
+      "priority": "P1",
+      "enabled": true,
+      "name": "IMPS Inward Pay (Credit) - Balance Credited",
+      "description": "",
+      "expected_result": "0210 RC 00; balance increased by 1000.00.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Inward credit",
+          "tx": "imps_inward",
+          "amount": "1000.00",
+          "direction": "CR",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "1000.00"
+            }
+          }
+        },
+        {
+          "label": "Cleanup reversal (credit)",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_POS_005",
+      "category": "Positive",
+      "priority": "P2",
+      "enabled": true,
+      "name": "IMPS Outward then Inward (Round Trip)",
+      "description": "",
+      "expected_result": "Both approved; net balance unchanged.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "250.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Inward credit",
+          "tx": "imps_inward",
+          "amount": "250.00",
+          "direction": "CR",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_001",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Closed Account - List Account",
+      "description": "",
+      "expected_result": "Declined with invalid-account code.",
+      "profile": "closed",
+      "steps": [
+        {
+          "label": "List account",
+          "tx": "imps_list_account",
+          "expect": {
+            "rc": [
+              "52",
+              "53",
+              "39",
+              "42",
+              "14"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_002",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Closed Account - Outward Debit",
+      "description": "",
+      "expected_result": "Declined with invalid-account code.",
+      "profile": "closed",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "1000.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "52",
+              "53",
+              "39",
+              "42",
+              "14"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_003",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Closed Account - Inward Credit",
+      "description": "",
+      "expected_result": "Credit to closed account rejected.",
+      "profile": "closed",
+      "steps": [
+        {
+          "label": "Inward credit",
+          "tx": "imps_inward",
+          "amount": "1000.00",
+          "direction": "CR",
+          "expect": {
+            "rc": [
+              "52",
+              "53",
+              "39",
+              "42",
+              "14"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_004",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Account Not Found - Outward Debit",
+      "description": "",
+      "expected_result": "Declined with invalid-account code.",
+      "profile": "not_found",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "1000.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "52",
+              "53",
+              "39",
+              "42",
+              "14"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_005",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Beneficiary Not Found - Inward Credit",
+      "description": "",
+      "expected_result": "Declined with invalid-account code.",
+      "profile": "not_found",
+      "steps": [
+        {
+          "label": "Inward credit",
+          "tx": "imps_inward",
+          "amount": "1000.00",
+          "direction": "CR",
+          "expect": {
+            "rc": [
+              "52",
+              "53",
+              "39",
+              "42",
+              "14"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_006",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Total Freeze - Outward Debit",
+      "description": "",
+      "expected_result": "Declined 62 / 57 / 05.",
+      "profile": "total_freeze",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "1000.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "62",
+              "57",
+              "05"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_007",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Total Freeze - Inward Credit",
+      "description": "",
+      "expected_result": "Declined 62 / 57 / 05.",
+      "profile": "total_freeze",
+      "steps": [
+        {
+          "label": "Inward credit",
+          "tx": "imps_inward",
+          "amount": "1000.00",
+          "direction": "CR",
+          "expect": {
+            "rc": [
+              "62",
+              "57",
+              "05"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_008",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Debit Freeze - Outward Debit Blocked",
+      "description": "",
+      "expected_result": "Declined 62 / 57 / 05.",
+      "profile": "debit_freeze",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "1000.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "62",
+              "57",
+              "05"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_009",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Debit Freeze - Inward Credit Allowed",
+      "description": "",
+      "expected_result": "Credit approved 00.",
+      "profile": "debit_freeze",
+      "steps": [
+        {
+          "label": "Inward credit",
+          "tx": "imps_inward",
+          "amount": "100.00",
+          "direction": "CR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Cleanup reversal",
+          "link": {
+            "type": "reversal",
+            "step": 1,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_010",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Credit Freeze - Inward Credit Blocked",
+      "description": "",
+      "expected_result": "Declined 62 / 57 / 05.",
+      "profile": "credit_freeze",
+      "steps": [
+        {
+          "label": "Inward credit",
+          "tx": "imps_inward",
+          "amount": "1000.00",
+          "direction": "CR",
+          "expect": {
+            "rc": [
+              "62",
+              "57",
+              "05"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_011",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Credit Freeze - Outward Debit Allowed",
+      "description": "",
+      "expected_result": "Debit approved 00.",
+      "profile": "credit_freeze",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Cleanup reversal",
+          "link": {
+            "type": "reversal",
+            "step": 1,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_012",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Dormant Account - Outward Debit",
+      "description": "",
+      "expected_result": "Declined 57 / 62 / 05.",
+      "profile": "dormant",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "1000.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "57",
+              "62",
+              "05"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_NA_013",
+      "category": "Negative - Account",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Insufficient Funds - No Debit Posted",
+      "description": "",
+      "expected_result": "Declined 51; balance unchanged.",
+      "profile": "low_funds",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "500.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "51"
+            ]
+          }
+        },
+        {
+          "label": "Closing balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_BD_001",
+      "category": "Boundary",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Zero Amount Debit",
+      "description": "",
+      "expected_result": "Declined 13.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "0.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "13"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_BD_002",
+      "category": "Boundary",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Debit = Per-Transaction Limit (500000.00)",
+      "description": "",
+      "expected_result": "Approved 00 at the exact limit.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "500000.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Cleanup reversal",
+          "link": {
+            "type": "reversal",
+            "step": 1,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_BD_003",
+      "category": "Boundary",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Debit = Limit + 0.01 (500000.01)",
+      "description": "",
+      "expected_result": "Declined 61.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "500000.01",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "61"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_BD_004",
+      "category": "Boundary",
+      "priority": "P2",
+      "enabled": true,
+      "name": "Minimum Debit (1.00)",
+      "description": "",
+      "expected_result": "Approved 00.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "1.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Cleanup reversal",
+          "link": {
+            "type": "reversal",
+            "step": 1,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_BD_005",
+      "category": "Boundary",
+      "priority": "P2",
+      "enabled": true,
+      "name": "Credit = Per-Transaction Limit (500000.00)",
+      "description": "",
+      "expected_result": "Approved 00.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Inward credit",
+          "tx": "imps_inward",
+          "amount": "500000.00",
+          "direction": "CR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Cleanup reversal",
+          "link": {
+            "type": "reversal",
+            "step": 1,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_BD_006",
+      "category": "Boundary",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Daily Frequency Limit (4th Debit)",
+      "description": "",
+      "expected_result": "First three approved; fourth declined 65.",
+      "profile": "frequency",
+      "steps": [
+        {
+          "label": "Debit 1",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Debit 2",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Debit 3",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Debit 4 (over limit)",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "65",
+              "61"
+            ]
+          }
+        },
+        {
+          "label": "Cleanup reversal 1",
+          "link": {
+            "type": "reversal",
+            "step": 1,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Cleanup reversal 2",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Cleanup reversal 3",
+          "link": {
+            "type": "reversal",
+            "step": 3,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_BD_007",
+      "category": "Boundary",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Non-Numeric Amount (DE 4)",
+      "description": "",
+      "expected_result": "Declined 13 / 30.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "00000000ABCD",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "13",
+              "30"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_RV_001",
+      "category": "Reversal",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Outward Reversal (Timeout 68) Restores Balance",
+      "description": "",
+      "expected_result": "0430 RC 00; balance fully restored.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "1000.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "-1000.00"
+            }
+          }
+        },
+        {
+          "label": "Reversal 0420",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              90
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_RV_002",
+      "category": "Reversal",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Reversal Without Original Transaction",
+      "description": "",
+      "expected_result": "25 / 21 / 00 with NO credit.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Unmatched 0420",
+          "tx": "imps_outward_reversal",
+          "amount": "500.00",
+          "expect": {
+            "rc": [
+              "25",
+              "21",
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Closing balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_RV_003",
+      "category": "Reversal",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Duplicate Reversal (Same 0420 Twice)",
+      "description": "",
+      "expected_result": "Second reversal 94 / 00; credited once.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "500.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "First reversal",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Duplicate 0420",
+          "link": {
+            "type": "duplicate",
+            "step": 3
+          },
+          "expect": {
+            "rc": [
+              "94",
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Closing balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_RV_004",
+      "category": "Reversal",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Repeat Reversal Advice (0421)",
+      "description": "",
+      "expected_result": "0421 acknowledged 00; no double credit.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "500.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Original reversal 0420",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Repeat reversal 0421",
+          "link": {
+            "type": "repeat_reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Closing balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_RV_005",
+      "category": "Reversal",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Reversal Amount Mismatch",
+      "description": "",
+      "expected_result": "Mismatched reversal rejected.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "500.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Reversal with wrong amount 600.00",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68",
+            "amount": "600.00"
+          },
+          "expect": {
+            "rc": [
+              "13",
+              "12",
+              "30"
+            ]
+          }
+        },
+        {
+          "label": "Balance after bad reversal",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "-500.00"
+            }
+          }
+        },
+        {
+          "label": "Cleanup reversal",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_RV_006",
+      "category": "Reversal",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Reversal of a Declined Transaction",
+      "description": "",
+      "expected_result": "No credit to the account.",
+      "profile": "low_funds",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "500.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "51"
+            ]
+          }
+        },
+        {
+          "label": "Reversal of declined txn",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "21",
+              "00",
+              "25"
+            ]
+          }
+        },
+        {
+          "label": "Closing balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_RV_007",
+      "category": "Reversal",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Inward Credit Reversal Debits Back",
+      "description": "",
+      "expected_result": "Credit reversed; balance back to opening.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Inward credit",
+          "tx": "imps_inward",
+          "amount": "300.00",
+          "direction": "CR",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "300.00"
+            }
+          }
+        },
+        {
+          "label": "Credit reversal",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_DP_001",
+      "category": "Duplicate",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Duplicate Debit (Identical Resend)",
+      "description": "",
+      "expected_result": "94; debited only once.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "500.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Identical resend",
+          "link": {
+            "type": "duplicate",
+            "step": 2
+          },
+          "expect": {
+            "rc": [
+              "94"
+            ]
+          }
+        },
+        {
+          "label": "Balance after duplicate",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "-500.00"
+            }
+          }
+        },
+        {
+          "label": "Cleanup reversal",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_DP_002",
+      "category": "Duplicate",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Same RRN, Different Amount",
+      "description": "",
+      "expected_result": "94; no second debit.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "500.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Same RRN, amount 700.00",
+          "tx": "imps_outward",
+          "amount": "700.00",
+          "direction": "DR",
+          "link": {
+            "type": "same_rrn",
+            "step": 2
+          },
+          "expect": {
+            "rc": [
+              "94"
+            ]
+          }
+        },
+        {
+          "label": "Balance after duplicate",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "-500.00"
+            }
+          }
+        },
+        {
+          "label": "Cleanup reversal",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_DP_003",
+      "category": "Duplicate",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Duplicate Credit (Identical Resend)",
+      "description": "",
+      "expected_result": "94; credited only once.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Inward credit",
+          "tx": "imps_inward",
+          "amount": "400.00",
+          "direction": "CR",
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        },
+        {
+          "label": "Identical resend",
+          "link": {
+            "type": "duplicate",
+            "step": 2
+          },
+          "expect": {
+            "rc": [
+              "94"
+            ]
+          }
+        },
+        {
+          "label": "Balance after duplicate",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "400.00"
+            }
+          }
+        },
+        {
+          "label": "Cleanup reversal",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_SC_001",
+      "category": "Security / Format",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Missing DE 102 (Account)",
+      "description": "",
+      "expected_result": "Declined 30 / 12 / 14.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Debit without DE 102",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "remove": [
+            102
+          ],
+          "expect": {
+            "rc": [
+              "30",
+              "12",
+              "14"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_SC_002",
+      "category": "Security / Format",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Missing DE 4 (Amount)",
+      "description": "",
+      "expected_result": "Declined 30 / 12 / 13.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Debit without DE 4",
+          "tx": "imps_outward",
+          "direction": "DR",
+          "remove": [
+            4
+          ],
+          "expect": {
+            "rc": [
+              "30",
+              "12",
+              "13"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_SC_003",
+      "category": "Security / Format",
+      "priority": "P1",
+      "enabled": true,
+      "name": "LLVAR Length Tampered (DE 102 prefix = 40)",
+      "description": "",
+      "expected_result": "Format error 30 - never approved.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Tampered DE 102 length",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "tamper": [
+            {
+              "op": "llvar_len",
+              "de": 102,
+              "value": "40"
+            }
+          ],
+          "expect": {
+            "rc": [
+              "30"
+            ],
+            "allow_no_response": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_SC_004",
+      "category": "Security / Format",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Truncated Message",
+      "description": "",
+      "expected_result": "Format error 30.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Truncated",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "tamper": [
+            {
+              "op": "truncate",
+              "chars": 15
+            }
+          ],
+          "expect": {
+            "rc": [
+              "30"
+            ],
+            "allow_no_response": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_SC_005",
+      "category": "Security / Format",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Trailing Garbage After Last DE",
+      "description": "",
+      "expected_result": "Format error 30.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Trailing bytes",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "tamper": [
+            {
+              "op": "append",
+              "value": "XYZ999"
+            }
+          ],
+          "expect": {
+            "rc": [
+              "30"
+            ],
+            "allow_no_response": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_SC_006",
+      "category": "Security / Format",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Bitmap Bit Set Without Data (DE 5)",
+      "description": "",
+      "expected_result": "Format error 30.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Extra bitmap bit",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "tamper": [
+            {
+              "op": "bitmap_set",
+              "de": 5
+            }
+          ],
+          "expect": {
+            "rc": [
+              "30"
+            ],
+            "allow_no_response": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_SC_007",
+      "category": "Security / Format",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Injection String in DE 102",
+      "description": "",
+      "expected_result": "Declined safely; CBS stays up.",
+      "profile": "sql_injection",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "14",
+              "52",
+              "53",
+              "30",
+              "12"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_SC_008",
+      "category": "Security / Format",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Unsupported Processing Code (990000)",
+      "description": "",
+      "expected_result": "Declined 12 / 40.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "DE 3 = 990000",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "proc_code": "990000",
+          "expect": {
+            "rc": [
+              "12",
+              "40"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_SC_009",
+      "category": "Security / Format",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Non-Numeric Processing Code",
+      "description": "",
+      "expected_result": "Declined 12 / 30.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "DE 3 = 00A000",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "proc_code": "00A000",
+          "expect": {
+            "rc": [
+              "12",
+              "30"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_SC_010",
+      "category": "Security / Format",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Foreign Currency (DE 49 = 840)",
+      "description": "",
+      "expected_result": "Declined 12 / 30 / 57.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "DE 49 = 840",
+          "tx": "imps_outward",
+          "amount": "100.00",
+          "direction": "DR",
+          "set": {
+            "49": "840"
+          },
+          "expect": {
+            "rc": [
+              "12",
+              "30",
+              "57"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_SC_011",
+      "category": "Security / Format",
+      "priority": "P1",
+      "enabled": true,
+      "name": "Negative / Signed Amount",
+      "description": "",
+      "expected_result": "Declined 13 / 30.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Outward debit",
+          "tx": "imps_outward",
+          "amount": "-00000010000",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "13",
+              "30"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_TF_001",
+      "category": "Timeout / Fault",
+      "priority": "P1",
+      "enabled": true,
+      "name": "CBS Late Response -> Switch Timeout -> Reversal",
+      "description": "Mock CBS: amount 68.00 posts then answers after 5 s.",
+      "expected_result": "Switch times out and reverses; account not debited in the end.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Debit (CBS answers late)",
+          "tx": "imps_outward",
+          "amount": "68.00",
+          "direction": "DR",
+          "timeout_sec": 2,
+          "expect": {
+            "timeout": true
+          }
+        },
+        {
+          "label": "Timeout reversal (68)",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00",
+              "21",
+              "25"
+            ]
+          }
+        },
+        {
+          "label": "Closing balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_TF_002",
+      "category": "Timeout / Fault",
+      "priority": "P1",
+      "enabled": true,
+      "name": "CBS Drops Connection -> Reversal",
+      "description": "Mock CBS: amount 91.00 posts then closes the socket.",
+      "expected_result": "No response; reversal restores the account.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Debit (CBS drops)",
+          "tx": "imps_outward",
+          "amount": "91.00",
+          "direction": "DR",
+          "timeout_sec": 3,
+          "expect": {
+            "timeout": true
+          }
+        },
+        {
+          "label": "Reversal after no response",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "00",
+              "21",
+              "25"
+            ]
+          }
+        },
+        {
+          "label": "Closing balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "IMPS_TF_003",
+      "category": "Timeout / Fault",
+      "priority": "P1",
+      "enabled": true,
+      "name": "CBS System Malfunction (96) -> Reversal",
+      "description": "Mock CBS: amount 96.00 returns 96 without posting.",
+      "expected_result": "96 / 91 then reversal; balance unchanged.",
+      "profile": "standard",
+      "steps": [
+        {
+          "label": "Opening balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ]
+          }
+        },
+        {
+          "label": "Debit (CBS returns 96)",
+          "tx": "imps_outward",
+          "amount": "96.00",
+          "direction": "DR",
+          "expect": {
+            "rc": [
+              "96",
+              "91"
+            ]
+          }
+        },
+        {
+          "label": "Reversal after 96",
+          "link": {
+            "type": "reversal",
+            "step": 2,
+            "reason": "68"
+          },
+          "expect": {
+            "rc": [
+              "21",
+              "00",
+              "25"
+            ]
+          }
+        },
+        {
+          "label": "Closing balance",
+          "tx": "imps_balance_enquiry",
+          "amount": "0.00",
+          "expect": {
+            "rc": [
+              "00"
+            ],
+            "present": [
+              54
+            ],
+            "balance": {
+              "from_step": 1,
+              "delta": "0.00"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

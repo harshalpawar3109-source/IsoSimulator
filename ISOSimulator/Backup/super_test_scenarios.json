@@ -1,0 +1,145 @@
+[
+  {
+    "id": "TC_ATM_001",
+    "category": "Financial Flows",
+    "testTitle": "Full withdrawal happy path with real-time CBS ledger debit",
+    "isoMessage": "0200 / 0210 Authorization",
+    "expectedResponseCode": "00",
+    "precondition": "Active account with available balance >= INR 5,000; ATM terminal provisioned.",
+    "steps": [
+      "1. Send 0200 Cash Withdrawal request for INR 5,000 with Processing Code 011000.",
+      "2. Switch validates PAN (DE 2), Track 2 (DE 35), and encrypts PIN block.",
+      "3. CBS validates ledger balance and commits real-time debit."
+    ],
+    "expectedResult": "CBS balance decremented by INR 5,000; Switch returns 0210 with DE 39 = '00' and DE 54 updated balance buckets.",
+    "rbiComplianceTag": "Standard Cash Dispense & Immediate Ledger Debit",
+    "severity": "Critical"
+  },
+  {
+    "id": "TC_ATM_002",
+    "category": "Timeouts & Auto-Reversals",
+    "testTitle": "Switch-to-CBS timeout triggering 0420 auto-reversal and immediate hold release",
+    "isoMessage": "0200 Timeout / 0420 Reversal",
+    "expectedResponseCode": "68",
+    "precondition": "CBS endpoint artificially delayed beyond socket timeout threshold (e.g., > 5s).",
+    "steps": [
+      "1. Send 0200 Cash Withdrawal request.",
+      "2. Client/Switch encounters socket timeout waiting for 0210 response.",
+      "3. Switch automatically generates and dispatches 0420 Reversal Advice with DE 90 pointing to original 0200 context."
+    ],
+    "expectedResult": "CBS receives 0420, releases temporary lien/hold on account immediately; returns 0430 response with DE 39 = '00'.",
+    "rbiComplianceTag": "RBI TAT T+1 / T+5 Reversal Rule",
+    "severity": "Critical"
+  },
+  {
+    "id": "TC_ATM_003",
+    "category": "Timeouts & Auto-Reversals",
+    "testTitle": "Cash jam / partial dispense reversal advice handling",
+    "isoMessage": "0420 Reversal Advice",
+    "expectedResponseCode": "00",
+    "precondition": "ATM hardware signals partial cash dispenser failure after host authorization.",
+    "steps": [
+      "1. Terminal receives 0210 Approved (DE 39 = '00').",
+      "2. Hardware encounters cash jam, dispensing only half the requested amount.",
+      "3. Terminal triggers asynchronous 0420 Reversal Advice for the un-dispensed or total amount."
+    ],
+    "expectedResult": "CBS processes advice, debits only the dispensed fraction (or fully reverses based on configuration) and updates settlement ledger.",
+    "rbiComplianceTag": "Partial Dispense Dispensation Audit",
+    "severity": "High"
+  },
+  {
+    "id": "TC_ATM_004",
+    "category": "RBI Mandates & Compliance",
+    "testTitle": "RBI T+5 calendar day auto-credit compliance and delayed reversal penalty audit checks",
+    "isoMessage": "0420 / 0430 Reconciliation",
+    "expectedResponseCode": "00",
+    "precondition": "Failed transaction left dangling past standard clearing window without automatic reversal.",
+    "steps": [
+      "1. Simulate legacy failed transaction aging past T+0, T+1, up to T+4 days.",
+      "2. Run automated EOD RBI compliance audit script scanning un-reversed client logs.",
+      "3. Verify auto-crediting mechanism and calculation of customer compensation penalty (INR 100/day past T+5)."
+    ],
+    "expectedResult": "System flags delayed reversal, auto-credits customer account with principal + penalty, and logs audit trail for RBI scrutiny.",
+    "rbiComplianceTag": "RBI T+5 Auto-Reversal Penalty Compliance",
+    "severity": "Critical"
+  },
+  {
+    "id": "TC_ATM_005",
+    "category": "CBS Account States",
+    "testTitle": "Dormant, lien-marked, and total freeze account rejections",
+    "isoMessage": "0200 / 0210 Authorization",
+    "expectedResponseCode": "51",
+    "precondition": "Account status set to 'Dormant', 'Under Legal Lien', or 'Frozen' in CBS master table.",
+    "steps": [
+      "1. Target test account marked as Frozen/Dormant.",
+      "2. Send 0200 Cash Withdrawal request.",
+      "3. CBS switch validator intercepts account restriction flags."
+    ],
+    "expectedResult": "CBS rejects transaction instantly; returns 0210 with DE 39 = '51' (Insufficient Funds / Restricted Account) without altering ledger balance.",
+    "rbiComplianceTag": "CBS Account State Validation",
+    "severity": "High"
+  },
+  {
+    "id": "TC_ATM_006",
+    "category": "Reconciliation & Security",
+    "testTitle": "3-strike PIN block lock and hotlisted card rejection",
+    "isoMessage": "0200 / 0210 Authorization",
+    "expectedResponseCode": "55",
+    "precondition": "Card status flagged as 'Hotlisted' or PIN retry counter = 2.",
+    "steps": [
+      "1. Send 0200 request with incorrect PIN leading to 3rd consecutive failure.",
+      "2. HSM validates PIN block against PVV/ZPK and signals failure limit reached.",
+      "3. Switch marks card status as temporarily or permanently blocked in database."
+    ],
+    "expectedResult": "Switch/CBS returns 0210 with DE 39 = '55' (Incorrect PIN) or '14' (Hotlisted/Invalid Card) and blocks further ATM access.",
+    "rbiComplianceTag": "PIN Block Security & Hotlist Validation",
+    "severity": "Critical"
+  },
+  {
+    "id": "TC_ATM_007",
+    "category": "RBI Mandates & Compliance",
+    "testTitle": "Daily card withdrawal velocity limits (count and amount ceiling)",
+    "isoMessage": "0200 / 0210 Authorization",
+    "expectedResponseCode": "61",
+    "precondition": "Card profile configured with daily ceiling of 3 transactions or INR 20,000 aggregate limit.",
+    "steps": [
+      "1. Execute successful withdrawal transactions reaching the daily transaction count or amount ceiling.",
+      "2. Send subsequent valid 0200 withdrawal request exceeding the velocity threshold."
+    ],
+    "expectedResult": "CBS velocity checking engine blocks transaction; returns 0210 with DE 39 = '61' (Exceeds Withdrawal Limit).",
+    "rbiComplianceTag": "Daily Velocity & Frequency Ceiling Check",
+    "severity": "High"
+  },
+  {
+    "id": "TC_ATM_008",
+    "category": "Reconciliation & Security",
+    "testTitle": "EOD 3-way reconciliation (NFS vs. Switch vs. CBS dump) flagging unreconciled transactions",
+    "isoMessage": "Batch Reconciliation Dump",
+    "expectedResponseCode": "00",
+    "precondition": "End-of-day clearing files generated from National Financial Switch (NFS), Switch journal, and CBS ledger.",
+    "steps": [
+      "1. Ingest NFS settlement flat file, Switch transaction journal, and CBS transaction log.",
+      "2. Execute automated 3-way matching script comparing STAN, RRN, Amount, and Timestamp.",
+      "3. Simulate intentional phantom credit/debit mismatch on 1 record."
+    ],
+    "expectedResult": "Reconciliation engine successfully flags discrepancy, generates an exception report, and outputs unreconciled journal entries.",
+    "rbiComplianceTag": "EOD 3-Way Reconciliation Mandate",
+    "severity": "Critical"
+  },
+  {
+    "id": "TC_ATM_009",
+    "category": "Reconciliation & Security",
+    "testTitle": "ISO PIN block encryption check (ensuring no plaintext PIN in switch/CBS traces)",
+    "isoMessage": "0200 Security Audit",
+    "expectedResponseCode": "00",
+    "precondition": "Network packet analyzer (Wireshark / Log interceptor) monitoring traffic on port 9019.",
+    "steps": [
+      "1. Initiate standard 0200 transaction containing DE 52 (PIN Data).",
+      "2. Capture raw TCP byte stream across switch interface.",
+      "3. Inspect hex payload for plaintext representation of user PIN digits."
+    ],
+    "expectedResult": "DE 52 contains strictly formatted ISO 9564 Format 0/1 encrypted cipher block; zero instances of plaintext PIN in logs or network traces.",
+    "rbiComplianceTag": "ISO 9564 / Encrypted PIN Block Security",
+    "severity": "Critical"
+  }
+]

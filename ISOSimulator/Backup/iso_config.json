@@ -1,0 +1,403 @@
+{
+  "target_settings": {
+    "default_ip": "10.167.1.153",
+    "default_port": 9019,
+    "default_framing": "ascii_4",
+    "default_bitmap_fmt": "hex_ascii",
+    "default_charset": "ascii",
+    "default_tpdu": ""
+  },
+  "handshake_settings": {
+    "mti": "0800",
+    "network_code": "301",
+    "interval_seconds": 5
+  },
+  "field_definitions": {
+    "2": {
+      "name": "Primary Account Number (PAN)",
+      "type": "llvar",
+      "len": 2
+    },
+    "3": {
+      "name": "Processing Code",
+      "type": "fixed",
+      "len": 6
+    },
+    "4": {
+      "name": "Amount, Transaction",
+      "type": "fixed",
+      "len": 12
+    },
+    "7": {
+      "name": "Transmission Date & Time",
+      "type": "fixed",
+      "len": 10
+    },
+    "11": {
+      "name": "System Trace Audit Number (STAN)",
+      "type": "fixed",
+      "len": 6
+    },
+    "12": {
+      "name": "Time, Local Transaction",
+      "type": "fixed",
+      "len": 6
+    },
+    "13": {
+      "name": "Date, Local Transaction",
+      "type": "fixed",
+      "len": 4
+    },
+    "14": {
+      "name": "Date, Expiration",
+      "type": "fixed",
+      "len": 4
+    },
+    "15": {
+      "name": "Date, Settlement",
+      "type": "fixed",
+      "len": 4
+    },
+    "17": {
+      "name": "Date, Capture",
+      "type": "fixed",
+      "len": 4
+    },
+    "18": {
+      "name": "Merchant Type (MCC)",
+      "type": "fixed",
+      "len": 4
+    },
+    "22": {
+      "name": "POS Entry Mode",
+      "type": "fixed",
+      "len": 3
+    },
+    "25": {
+      "name": "POS Condition Code",
+      "type": "fixed",
+      "len": 2
+    },
+    "32": {
+      "name": "Acquiring Institution ID Code",
+      "type": "llvar",
+      "len": 2
+    },
+    "35": {
+      "name": "Track 2 Data",
+      "type": "llvar",
+      "len": 2
+    },
+    "37": {
+      "name": "Retrieval Reference Number (RRN)",
+      "type": "fixed",
+      "len": 12
+    },
+    "38": {
+      "name": "Authorization ID Response",
+      "type": "fixed",
+      "len": 6
+    },
+    "39": {
+      "name": "Response Code",
+      "type": "fixed",
+      "len": 2
+    },
+    "41": {
+      "name": "Card Acceptor Terminal ID",
+      "type": "fixed",
+      "len": 8
+    },
+    "42": {
+      "name": "Card Acceptor ID Code",
+      "type": "fixed",
+      "len": 15
+    },
+    "43": {
+      "name": "Card Acceptor Name/Location",
+      "type": "fixed",
+      "len": 40
+    },
+    "48": {
+      "name": "Additional Data - Private",
+      "type": "lllvar",
+      "len": 3
+    },
+    "49": {
+      "name": "Currency Code, Transaction",
+      "type": "fixed",
+      "len": 3
+    },
+    "54": {
+      "name": "Additional Amounts",
+      "type": "lllvar",
+      "len": 3
+    },
+    "60": {
+      "name": "Additional POS / Reserved Private",
+      "type": "lllvar",
+      "len": 3
+    },
+    "63": {
+      "name": "Reserved Private (Mini-Statement)",
+      "type": "lllvar",
+      "len": 3
+    },
+    "70": {
+      "name": "Network Management Information Code",
+      "type": "fixed",
+      "len": 3
+    },
+    "90": {
+      "name": "Original Data Elements",
+      "type": "fixed",
+      "len": 42
+    },
+    "102": {
+      "name": "Account Identification 1",
+      "type": "llvar",
+      "len": 2
+    },
+    "120": {
+      "name": "Reserved Private",
+      "type": "lllvar",
+      "len": 3
+    }
+  },
+  "sample_requests": {
+    "cash_withdrawal": {
+      "label": "Cash Withdrawal Request",
+      "mti": "0200",
+      "proc_code": "011000",
+      "des_present": [
+        2,
+        3,
+        4,
+        7,
+        11,
+        12,
+        13,
+        15,
+        17,
+        18,
+        22,
+        32,
+        35,
+        37,
+        41,
+        42,
+        43,
+        48,
+        49,
+        60,
+        102
+      ]
+    },
+    "balance_inquiry": {
+      "label": "Balance Enquiry Request",
+      "mti": "0200",
+      "proc_code": "311000",
+      "des_present": [
+        2,
+        3,
+        4,
+        7,
+        11,
+        12,
+        13,
+        15,
+        17,
+        18,
+        22,
+        32,
+        35,
+        37,
+        41,
+        42,
+        43,
+        48,
+        49,
+        60,
+        102
+      ]
+    },
+    "mini_statement": {
+      "label": "Mini Statement Request",
+      "mti": "0200",
+      "proc_code": "380000",
+      "des_present": [
+        2,
+        3,
+        4,
+        7,
+        11,
+        12,
+        13,
+        15,
+        17,
+        18,
+        22,
+        32,
+        35,
+        37,
+        41,
+        42,
+        43,
+        48,
+        49,
+        60,
+        102,
+        120
+      ]
+    },
+    "pos_purchase": {
+      "label": "POS Purchase Request",
+      "mti": "0200",
+      "proc_code": "000000",
+      "des_present": [
+        2,
+        3,
+        4,
+        7,
+        11,
+        12,
+        13,
+        15,
+        17,
+        18,
+        22,
+        25,
+        32,
+        35,
+        37,
+        41,
+        42,
+        43,
+        48,
+        49,
+        60,
+        102
+      ]
+    },
+    "ecom_purchase": {
+      "label": "E-Commerce Purchase",
+      "mti": "0200",
+      "proc_code": "000000",
+      "des_present": [
+        2,
+        3,
+        4,
+        7,
+        11,
+        12,
+        13,
+        14,
+        15,
+        17,
+        18,
+        22,
+        25,
+        32,
+        37,
+        41,
+        42,
+        43,
+        48,
+        49,
+        60,
+        102
+      ]
+    },
+    "pos_reversal": {
+      "label": "POS Reversal (0420)",
+      "mti": "0420",
+      "proc_code": "000000",
+      "des_present": [
+        2,
+        3,
+        4,
+        7,
+        11,
+        12,
+        13,
+        15,
+        17,
+        18,
+        22,
+        25,
+        32,
+        37,
+        38,
+        39,
+        41,
+        42,
+        43,
+        48,
+        49,
+        60,
+        90,
+        102
+      ]
+    },
+    "issuer_reversal": {
+      "label": "Issuer Reversal (0420)",
+      "mti": "0420",
+      "proc_code": "011000",
+      "des_present": [
+        2,
+        3,
+        4,
+        7,
+        11,
+        12,
+        13,
+        15,
+        17,
+        18,
+        22,
+        32,
+        37,
+        38,
+        39,
+        41,
+        42,
+        43,
+        48,
+        49,
+        60,
+        90,
+        102
+      ]
+    },
+    "ecom_reversal": {
+      "label": "E-Commerce Reversal (0420)",
+      "mti": "0420",
+      "proc_code": "000000",
+      "des_present": [
+        2,
+        3,
+        4,
+        7,
+        11,
+        12,
+        13,
+        15,
+        17,
+        18,
+        22,
+        25,
+        32,
+        37,
+        39,
+        41,
+        42,
+        43,
+        48,
+        49,
+        60,
+        90,
+        102
+      ]
+    }
+  }
+}

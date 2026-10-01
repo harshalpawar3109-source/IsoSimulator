@@ -1,0 +1,196 @@
+{
+  "settings": {
+    "ports": {
+      "9019": "ATM",
+      "9020": "UPI",
+      "9021": "IMPS"
+    },
+    "currency": "356",
+    "valid_bins": [
+      "607293",
+      "607607",
+      "508557"
+    ],
+    "direction_rule": {
+      "de": 124,
+      "credit_token": "CREDIT"
+    },
+    "credit_proc_prefixes": [
+      "20",
+      "21",
+      "26"
+    ],
+    "debit_proc_prefixes": [
+      "00",
+      "01",
+      "40"
+    ],
+    "network_codes": [
+      "001",
+      "002",
+      "101",
+      "201",
+      "301"
+    ],
+    "limits": {
+      "ATM": {
+        "per_txn": "25000.00",
+        "daily_count": 1000
+      },
+      "POS": {
+        "per_txn": "200000.00",
+        "daily_count": 1000
+      },
+      "ECOM": {
+        "per_txn": "200000.00",
+        "daily_count": 1000
+      },
+      "UPI": {
+        "per_txn": "100000.00",
+        "daily_count": 1000
+      },
+      "IMPS": {
+        "per_txn": "500000.00",
+        "daily_count": 1000
+      }
+    },
+    "faults": {
+      "delay": {
+        "68.00": 5
+      },
+      "drop": [
+        "91.00"
+      ],
+      "rc": {
+        "96.00": "96"
+      }
+    }
+  },
+  "accounts": {
+    "101303130001356": {
+      "name": "ATM STANDARD SAVINGS",
+      "status": "ACTIVE",
+      "balance": "1000000.00",
+      "min_balance": "0.00"
+    },
+    "0020001010000069": {
+      "name": "UPI/IMPS STANDARD SAVINGS",
+      "status": "ACTIVE",
+      "balance": "10000000.00",
+      "min_balance": "0.00"
+    },
+    "0020001010011800": {
+      "name": "CLOSED ACCOUNT",
+      "status": "CLOSED",
+      "balance": "0.00",
+      "min_balance": "0.00"
+    },
+    "0020001010011663": {
+      "name": "TOTAL FREEZE",
+      "status": "TOTAL_FREEZE",
+      "balance": "50000.00",
+      "min_balance": "0.00"
+    },
+    "0020001010011664": {
+      "name": "DEBIT FREEZE",
+      "status": "DEBIT_FREEZE",
+      "balance": "50000.00",
+      "min_balance": "0.00"
+    },
+    "0020001010011665": {
+      "name": "CREDIT FREEZE",
+      "status": "CREDIT_FREEZE",
+      "balance": "50000.00",
+      "min_balance": "0.00"
+    },
+    "0020001010011700": {
+      "name": "DORMANT / INOPERATIVE",
+      "status": "DORMANT",
+      "balance": "50000.00",
+      "min_balance": "0.00"
+    },
+    "0020001010010463": {
+      "name": "MIN BALANCE 1000",
+      "status": "ACTIVE",
+      "balance": "1500.00",
+      "min_balance": "1000.00"
+    },
+    "0020001010010999": {
+      "name": "LOW FUNDS",
+      "status": "ACTIVE",
+      "balance": "100.00",
+      "min_balance": "0.00"
+    },
+    "0020001010012000": {
+      "name": "FREQUENCY LIMIT 3/DAY",
+      "status": "ACTIVE",
+      "balance": "100000.00",
+      "min_balance": "0.00",
+      "limits": {
+        "ATM": {
+          "daily_count": 3
+        },
+        "UPI": {
+          "daily_count": 3
+        },
+        "IMPS": {
+          "daily_count": 3
+        }
+      }
+    }
+  },
+  "cards": {
+    "6072930130054479": {
+      "account": "101303130001356",
+      "status": "ACTIVE"
+    },
+    "6072930130011800": {
+      "account": "0020001010011800",
+      "status": "ACTIVE"
+    },
+    "6072930130011663": {
+      "account": "0020001010011663",
+      "status": "ACTIVE"
+    },
+    "6072930130011664": {
+      "account": "0020001010011664",
+      "status": "ACTIVE"
+    },
+    "6072930130011700": {
+      "account": "0020001010011700",
+      "status": "ACTIVE"
+    },
+    "6072930130010463": {
+      "account": "0020001010010463",
+      "status": "ACTIVE"
+    },
+    "6072930130010999": {
+      "account": "0020001010010999",
+      "status": "ACTIVE"
+    },
+    "6072930130012000": {
+      "account": "0020001010012000",
+      "status": "ACTIVE"
+    },
+    "6072930130099990": {
+      "account": "101303130001356",
+      "status": "ACTIVE"
+    },
+    "6072930130041000": {
+      "account": "101303130001356",
+      "status": "LOST"
+    },
+    "6072930130043000": {
+      "account": "101303130001356",
+      "status": "STOLEN"
+    },
+    "6072930130062000": {
+      "account": "101303130001356",
+      "status": "HOTLISTED"
+    },
+    "6072930130000000": {
+      "account": "0020009999999999",
+      "status": "ACTIVE"
+    }
+  }
+}
